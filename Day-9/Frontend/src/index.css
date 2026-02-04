@@ -16,6 +16,8 @@ html{
   padding: 1rem;
   border-radius: 1rem;
   max-width: 20rem;
+  display: flex;
+  flex-direction: column;
 }
 .notes{
   display: flex;
@@ -25,3 +27,65 @@ html{
   padding-inline: 3rem;
   flex-wrap: wrap;
 }
+.note-create-form{
+  display: flex;
+  gap: 1rem;
+  padding-inline: 3rem;
+  padding-block: 1rem;
+}
+.note-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 14px;
+}
+
+.delete-btn {
+  margin-top: 12px;
+  background-color: transparent;
+  color: #b91c1c; /* deep red */
+  border: 1.5px solid #b91c1c;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.delete-btn:hover {
+  background-color: #b91c1c;
+  color: #fff;
+}
+
+.delete-btn:active {
+  transform: scale(0.95);
+}
+
+.update-btn {
+  background-color: transparent;
+  color: #15803d; /* green */
+  border: 1.5px solid #15803d;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.update-btn:hover {
+  background-color: #15803d;
+  color: #ffffff;
+}
+
+.update-btn:active {
+  transform: scale(0.95);
+}
+.delete-btn,
+.update-btn {
+  min-width: 90px;   /* 👈 key line */
+  text-align: center;
+}
+
+

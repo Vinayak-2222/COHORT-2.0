@@ -4,11 +4,15 @@ require('dotenv').config()
 const express=require("express")
 const noteModel=require("./models/note.model")
 const cors=require("cors")
+const path =require("path")
+
 
 const app =express()
 
+
 app.use(express.json())
 app.use(cors())
+app.use(express.static("./public"))
 //POST METHOD /api/notes   create a new note and store in mongodb  req.body={title,description}
 app.post("/api/notes",async(req,res)=>{
     const{title,description}=req.body
@@ -49,5 +53,9 @@ app.patch("/api/notes/:id",async(req,res)=>{
     })
 })
 
+
+app.use('*name',(req,res)=>{
+    res.sendFile(path.join(__dirname,"..","/public/index.html"))
+})
 
 module.exports=app
