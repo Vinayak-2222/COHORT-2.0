@@ -12,7 +12,7 @@ const app =express()
 
 app.use(express.json())
 app.use(cors())
-app.use(express.static("./public"))
+app.use(express.static("./public")) //this makes public folder available for public
 //POST METHOD /api/notes   create a new note and store in mongodb  req.body={title,description}
 app.post("/api/notes",async(req,res)=>{
     const{title,description}=req.body
