@@ -1,0 +1,15 @@
+==>Authentication
+ 1. Register(1.user ka data save karna  2.token user ko dena)
+ 2.Login
+ 3.Logout
+ 4.[OTP based registration]
+
+ ==>Post
+ 1.Create
+ 2.can see the feed
+ 3.Like Post
+ 4.Save Post
+
+ ==>Users
+ 1.follower
+ 2.following
