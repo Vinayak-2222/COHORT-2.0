@@ -1,4 +1,4 @@
-const crypto=require('crypto');
+const bcrypt=require('bcryptjs');
 const jwt=require('jsonwebtoken');
 const usermodel=require("../models/user.model");
 
@@ -6,9 +6,10 @@ async function registerController(req,res){
     const {username,email,password,bio,profileImage}=req.body;
     const isuserAlreadyExists=await usermodel.findOne({$or:[{email},{username}]});
     if(isuserAlreadyExists){
-        return res.status(409).json({message:"user already exists" + (isuserAlreadyExists.email===email?" email already exists":" username already exists")});
+        return res.status(409).json({message:"user already exists" + 
+            (isuserAlreadyExists.email===email?" email already exists":" username already exists")});
     }
-    const hash=crypto.createHash("sha256").update(password).digest("hex");
+    const hash= await bcrypt.hash(password,10);
     const user=await usermodel.create({username,email,password:hash,bio,profileImage});
     const token=jwt.sign({
         id:user._id,
@@ -32,8 +33,8 @@ async function loginController(req,res){
     if(!user){
         return res.status(404).json({message:"user not found"});
     }
-    const hash=crypto.createHash("sha256").update(password).digest("hex");
-    const isPasswordCorrect=hash===user.password;
+    
+    const isPasswordCorrect=bcrypt.compare(password,user.password);
     if(!isPasswordCorrect){
         return res.status(401).json({message:"invalid password"});
     }
