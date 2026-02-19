@@ -10,21 +10,9 @@ const imagekit=new Imagekit({
 
 
 async function createPostController(req,res){
-    console.log(req.body,req.file)
+   
 
-    const token=req.cookies.token;
-    if(!token){
-        return res.status(401).json({message:"Token not provided, unauthorized"})
-    }
-    let decoded=null;
-    try{
-         decoded=jwt.verify(token,process.env.JWT_SECRET)
-    }
-    catch(err){
-        return res.status(401).json({message:"User not authorized"})
-    }
-    
-    console.log(decoded)
+   
 
     const file= await imagekit.files.upload({
         file: await toFile(Buffer.from(req.file.buffer),'file'),
@@ -35,7 +23,7 @@ async function createPostController(req,res){
     const post=await postModel.create({
         caption:req.body.caption,
         imgUrl:file.url,
-        user:decoded.id
+        user:req.user.id
     })
     res.status(201).json({
         message:"post created successfully",
@@ -45,21 +33,8 @@ async function createPostController(req,res){
 }
 
 async function getpostController(req,res){
-    const token=req.cookies.token
-    if(!token){
-        return res.status(401).json({
-            message:"Unauthrorized Token"
-        })
-    }
-    let decoded;
-    try{
-        decoded=jwt.verify(token,process.env.JWT_SECRET)
-    }catch(err){
-        return res.status(401).json({
-            message:"Token INVALID"
-        })
-    }
-    const userId=decoded.id
+    
+    const userId=req.user.id
     const posts=await postModel.find({
         user:userId
     })
@@ -71,28 +46,16 @@ async function getpostController(req,res){
 }
 
 async function getPostdetailsController(req,res){
-    const token =req.cookies.token
+
     const { postId } = req.params
-    if(!token){
-        return res.status(401).json({
-            message:"Unauthrorized Token"
-        })
-    }
-    let decoded;
-    try{
-        decoded=jwt.verify(token,process.env.JWT_SECRET)
-    }catch(err){
-        return res.status(401).json({
-            message:"Invalid token"
-        })
-    }
+    const userId = req.user.id
     const post=await postModel.findById(postId)
     if (!post){
         return res.status(404).json({
             message:"Post not found"
         })
     }
-    const userId = decoded.id
+    
     const isValidUser=post.user.toString()===userId
     if(!isValidUser){
         return res.status(403).json({
