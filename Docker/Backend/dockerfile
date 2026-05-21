@@ -1,7 +1,8 @@
 FROM node:20-alpine
-COPY ./package.json .
-COPY ./package-lock.json .
 
+WORKDIR /app
+COPY package.json /app
+COPY package-lock.json /app
 RUN npm install
-COPY ./server.js .
-CMD ["node", "server.js"]
+COPY . /app
+CMD ["node","server.js"]
