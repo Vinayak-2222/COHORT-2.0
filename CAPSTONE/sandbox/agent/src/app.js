@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import morgan from 'morgan';
 import fs from 'fs';
 import path from 'path';
@@ -13,13 +14,17 @@ const app = express();
 const httpServer = http.createServer(app);
 
 app.use(morgan('dev'));
+app.use(cors({
+    origin: '*',
+    methods: [ 'GET', 'POST', 'PATCH', 'DELETE' ],
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const io = new Server(httpServer, {
     cors: {
         origin: "*",
-        methods: [ "GET", "POST", "PATCH" ],
+        methods: [ "GET", "POST", "PATCH", "DELETE" ],
     }
 });
 
@@ -30,33 +35,37 @@ app.get('/', (req, res) => {
     });
 });
 
-const shell = process.env.SHELL || 'bash';
-
-// Spawn the PTY process
-const ptyProcess = pty.spawn(shell, [], {
-    name: 'xterm-color',
-    cols: 80,
-    rows: 30,
-    cwd: "/workspace",
-    env: process.env
-});
-
-ptyProcess.onData((data) => {
-    io.emit('terminal-output', data);
-});
-
-ptyProcess.onExit(({ exitCode, signal }) => {
-    console.log(`PTY process exited with code: ${exitCode}, signal: ${signal}`);
-});
+const shell = process.env.SHELL || (os.platform() === "win32" ? "powershell.exe" : "sh");
 
 io.on("connection", (socket) => {
     console.log("Client connected: " + socket.id);
+
+    const ptyProcess = pty.spawn(shell, [], {
+        name: 'xterm-color',
+        cols: 80,
+        rows: 30,
+        cwd: "/workspace",
+        env: process.env
+    });
+
+    ptyProcess.onData((data) => {
+        socket.emit('terminal-output', data);
+    });
+
+    ptyProcess.onExit(({ exitCode, signal }) => {
+        console.log(`PTY process exited with code: ${exitCode}, signal: ${signal}`);
+    });
 
     socket.on("terminal-input", (data) => {
         ptyProcess.write(data);
     });
 
+    socket.on("terminal-resize", ({ cols, rows }) => {
+        ptyProcess.resize(cols, rows);
+    });
+
     socket.on("disconnect", () => {
+        ptyProcess.kill();
         console.log("Client disconnected: " + socket.id);
     });
 })
