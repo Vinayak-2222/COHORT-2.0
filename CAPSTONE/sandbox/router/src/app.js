@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import {createProxyMiddleware} from 'http-proxy-middleware';
 import {createProxyServer} from 'httpxy';
 import http from 'node:http';
+import { refreshTTL } from './config/redis.js';
 
 const app = express();
 const wsProxy = createProxyServer();
@@ -43,9 +44,11 @@ function getAgentProxy(sandboxId) {
     return agentProxies[sandboxId];
 }
 
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
     const host=req.headers.host;
     const sandboxId = host.split('.')[0];
+
+    await refreshTTL(sandboxId);
     /**
      * pod1.preview.localhost
      * podl.agent.localhost
