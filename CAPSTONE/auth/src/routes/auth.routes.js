@@ -43,14 +43,8 @@ router.get('/google/callback', passport.authenticate('google', {
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         // Set token in cookie
-        res.cookie('token', token, {
-            httpOnly: true,           // JS can't read it — XSS protection
-            secure: true,             // only sent over HTTPS
-            sameSite: 'none',         // allow cross-site (iframes, different subdomains)
-            domain: '.cryboy.in',     // works across all *.cryboy.in subdomains
-            maxAge: 7 * 24 * 60 * 60 * 1000  // 7 days
-        });
-        res.redirect('https://www.cryboy.in'); // Redirect to your frontend after successful login
+        res.cookie('token', token);
+        res.redirect('http://localhost:5173'); // Redirect to your frontend after successful login
     } catch (err) {
         console.error('Error during Google authentication:', err);
         res.redirect('/'); // Redirect to your frontend on error

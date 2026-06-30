@@ -1,2 +1,5 @@
 .env
 k8s/secrets.yml
+*.zip
+
+**/node_modules/
