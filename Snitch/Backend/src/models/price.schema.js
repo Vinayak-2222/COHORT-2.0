@@ -1,4 +1,4 @@
-/*import mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 const priceSchema = new mongoose.Schema({
     amount: {
@@ -15,4 +15,4 @@ const priceSchema = new mongoose.Schema({
     _v: false
 });
 
-export default priceSchema;*/
+export default priceSchema;

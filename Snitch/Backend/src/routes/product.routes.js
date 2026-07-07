@@ -1,6 +1,6 @@
 import express from 'express';
 import { authenticateSeller } from '../middlewares/auth.middleware.js';
-import { createProduct,  getSellerProducts , /*getAllProducts, getProductDetails, addProductVariant*/ } from '../controllers/product.controller.js';
+import { createProduct,  getSellerProducts , getAllProducts, getProductDetails, addProductVariant } from '../controllers/product.controller.js';
 import multer from "multer";
 import { createProductValidator } from '../validator/product.validator.js';
 
@@ -37,7 +37,7 @@ router.get("/seller", authenticateSeller, getSellerProducts)
  * @description Get all products
  * @access Public
  */
-//router.get("/", getAllProducts)
+router.get("/", getAllProducts)
 
 
 /**
@@ -45,7 +45,7 @@ router.get("/seller", authenticateSeller, getSellerProducts)
  * @description Get product details by ID
  * @access Public
  */
-//router.get("/detail/:id", getProductDetails)
+router.get("/detail/:id", getProductDetails)
 
 
 /**
@@ -53,6 +53,6 @@ router.get("/seller", authenticateSeller, getSellerProducts)
  * @description Add a new variant to a product
  * @access Private (Seller only)
  */
-//router.post("/:productId/variants", authenticateSeller, upload.array('images', 7), addProductVariant)
+router.post("/:productId/variants", authenticateSeller, upload.array('images', 7), addProductVariant)
 
 export default router;

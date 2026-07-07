@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SNITCH — Engineering Documentation</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,wght@0,300;0,600;0,700;0,900;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:       #0E0F14;
+  --paper:     #F5F2EB;
+  --paper2:    #EDE9DF;
+  --paper3:    #E4DFD3;
+  --rule:      #D4CEBC;
+  --muted:     #6B6455;
+  --accent:    #C84B1F;
+  --accent2:   #1A6B4A;
+  --accent3:   #1B4587;
+  --gold:      #B8860B;
+  --code-bg:   #1A1C24;
+  --code-text: #E2DCCC;
+  --flag-c:    #5BA4CF;
+  --val-c:     #F4A261;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14.5px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.layout { display: flex; min-height: 100vh; }
+
+/* ─── Sidebar ─────────────────────────────────────── */
+nav {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--ink);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 32px 0 40px;
+}
+
+.nav-brand { padding: 0 24px 28px; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 24px; }
+.nav-brand .logo {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 4px;
+}
+.nav-brand .logo span { color: var(--accent); }
+.nav-brand .sub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.06em;
+}
+
+.nav-group-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 16px 24px 8px;
+}
+
+nav a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 24px;
+  text-decoration: none;
+  color: rgba(255,255,255,0.5);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px;
+  border-left: 2px solid transparent;
+  transition: all 0.15s ease;
+}
+nav a:hover { color: white; background: rgba(255,255,255,0.04); }
+nav a.active { color: white; border-left-color: var(--accent); background: rgba(200,75,31,0.08); }
+nav a:hover .nav-num, nav a.active .nav-num { background: var(--accent); color: white; }
+
+.nav-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  transition: all 0.15s ease;
+}
+
+/* ─── Main ────────────────────────────────────────── */
+main {
+  flex: 1;
+  max-width: calc(99% - 256px);
+  padding: 56px 56px 80px;
+}
+
+/* ─── Hero ────────────────────────────────────────── */
+.hero { margin-bottom: 64px; padding-bottom: 40px; border-bottom: 1px solid var(--rule); }
+.hero-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 16px;
+}
+.hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(36px, 5vw, 58px);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+.hero h1 em { font-style: italic; color: var(--accent); font-weight: 900; }
+.hero-desc {
+  font-size: 16px;
+  color: var(--muted);
+  max-width: 620px;
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+.hero-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+.hero-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+/* ─── Section ─────────────────────────────────────── */
+.section {
+  margin-bottom: 72px;
+  animation: fadeUp 0.4s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+.section-num-big {
+  font-family: 'Fraunces', serif;
+  font-size: 48px;
+  font-weight: 900;
+  color: var(--rule);
+  user-select: none;
+  line-height: 1;
+}
+.section-title-block { flex: 1; }
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+.section-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 28px 0 12px;
+}
+h4 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 20px 0 10px;
+}
+p { color: #2A2720; margin-bottom: 12px; }
+strong { font-weight: 500; color: var(--ink); }
+
+code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+  background: var(--paper3);
+  border: 1px solid var(--rule);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+ul, ol { margin: 0 0 12px 22px; }
+li { color: #2A2720; margin-bottom: 6px; }
+
+/* ─── Components ──────────────────────────────────── */
+.concept {
+  background: var(--paper2);
+  border-left: 3px solid var(--accent3);
+  border-radius: 0 8px 8px 0;
+  padding: 16px 20px;
+  margin: 16px 0;
+}
+.concept-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: var(--accent3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+.concept p { font-size: 14px; line-height: 1.65; color: var(--ink); margin: 0; }
+
+.note {
+  background: #FEF9EC;
+  border: 1px solid #EDD97A;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 16px 0;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.note .note-icon { font-size: 16px; flex-shrink: 0; }
+.note p { color: #5C4A00; font-size: 13px; margin: 0; line-height: 1.6; }
+.note strong { color: #3D3000; }
+
+.warn {
+  background: #FEF2F2;
+  border: 1px solid #FCA5A5;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 16px 0;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.warn .note-icon { font-size: 16px; flex-shrink: 0; }
+.warn p { color: #7F1D1D; font-size: 13px; margin: 0; line-height: 1.6; }
+.warn strong { color: #5C0F0F; }
+
+.step-label {
+  display: inline-block;
+  background: var(--accent);
+  color: white;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin: 16px 0 8px;
+}
+.step-label.green { background: var(--accent2); }
+.step-label.blue { background: var(--accent3); }
+.step-label.gold { background: var(--gold); }
+
+/* ─── Code block ──────────────────────────────────── */
+.code-wrap {
+  background: var(--code-bg);
+  border-radius: 8px;
+  margin: 16px 0;
+  overflow: hidden;
+}
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.code-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.copy-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,0.5);
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: all 0.15s ease;
+}
+.copy-btn:hover { color: white; border-color: rgba(255,255,255,0.4); }
+pre {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px;
+  color: var(--code-text);
+  padding: 16px;
+  overflow-x: auto;
+  line-height: 1.6;
+  white-space: pre;
+}
+.c-cmd { color: #87CEEB; font-weight: 600; }
+.c-flag { color: var(--flag-c); }
+.c-val { color: var(--val-c); }
+.c-str { color: #98C379; }
+.c-comment { color: rgba(255,255,255,0.28); font-style: italic; }
+.c-key { color: #C678DD; }
+.c-pipe { color: #E5C07B; }
+
+/* ─── Tables ──────────────────────────────────────── */
+.flag-table, .compare {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.flag-table th {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: var(--paper3);
+  text-align: left;
+  padding: 10px 14px;
+  font-weight: 500;
+}
+.flag-table td { padding: 10px 14px; border-top: 1px solid var(--rule); vertical-align: top; }
+.flag-table tbody tr:hover { background: var(--paper2); }
+.f-name { font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; color: var(--flag-c); }
+.f-val { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--val-c); }
+.f-desc { font-size: 13px; color: var(--ink); }
+.f-why { font-size: 12px; color: var(--muted); }
+
+.compare th {
+  background: var(--ink);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 12px 14px;
+  text-align: left;
+}
+.compare th:first-child { border-top-left-radius: 6px; }
+.compare th:last-child { border-top-right-radius: 6px; }
+.compare td { padding: 12px 14px; border-top: 1px solid var(--rule); font-size: 13px; }
+.compare .row-label { font-size: 13px; font-weight: 600; color: var(--ink); }
+.compare .local-val { color: var(--muted); }
+.compare .eks-val { color: var(--accent2); font-weight: 500; }
+
+/* ─── Flow diagram ────────────────────────────────── */
+.flow { margin: 16px 0; }
+.flow-step { display: flex; gap: 16px; min-height: 56px; }
+.flow-line { display: flex; flex-direction: column; align-items: center; padding-top: 6px; }
+.flow-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--accent); flex-shrink: 0;
+}
+.flow-connector { width: 2px; flex: 1; background: var(--rule); margin-top: 4px; }
+.flow-content { padding-bottom: 16px; flex: 1; }
+.flow-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.flow-detail { font-size: 12.5px; color: var(--muted); }
+
+/* ─── Scale diagram ───────────────────────────────── */
+.scale-diagram {
+  background: var(--paper2);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 20px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  line-height: 2;
+  color: var(--muted);
+  margin: 16px 0;
+}
+.scale-diagram .hi { color: var(--ink); font-weight: bold; }
+.scale-diagram .green { color: var(--accent2); }
+.scale-diagram .red { color: var(--accent); }
+
+/* ─── Divider ─────────────────────────────────────── */
+.divider {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 40px 0;
+}
+
+/* ─── Footer ──────────────────────────────────────── */
+footer {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--muted);
+  border-top: 2px solid var(--rule);
+  padding-top: 24px;
+  margin-top: 60px;
+}
+
+/* ─── Mobile ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  nav { display: none; }
+  main { padding: 32px 24px 60px; max-width: 100%; }
+  .hero h1 { font-size: 32px; }
+  footer { flex-direction: column; gap: 8px; }
+}
+</style>
+</head>
+<body><div class="layout"><nav><div class="nav-brand"><div class="logo">SNIT<span>CH</span></div><div class="sub">Engineering Documentation</div></div><div class="nav-group-label">Introduction</div><a href="#summary"><span class="nav-num">1</span>Executive summary</a><a href="#architecture"><span class="nav-num">2</span>Architecture</a><div class="nav-group-label">System</div><a href="#modules"><span class="nav-num">3</span>Core modules</a><a href="#workflow"><span class="nav-num">4</span>Workflows</a><a href="#data"><span class="nav-num">5</span>Data models</a><div class="nav-group-label">Engineering</div><a href="#frontend"><span class="nav-num">6</span>Frontend</a><a href="#backend"><span class="nav-num">7</span>Backend</a><a href="#cart"><span class="nav-num">8</span>Cart lifecycle</a><a href="#payment"><span class="nav-num">9</span>Payment workflow</a><div class="nav-group-label">Reference</div><a href="#api"><span class="nav-num">10</span>API surface</a><a href="#setup"><span class="nav-num">11</span>Local setup</a><a href="#env"><span class="nav-num">12</span>Environment</a><div class="nav-group-label">Quality</div><a href="#security"><span class="nav-num">13</span>Security</a><a href="#testing"><span class="nav-num">14</span>Testing</a><a href="#roadmap"><span class="nav-num">15</span>Roadmap</a><a href="#engineering"><span class="nav-num">16</span>Engineering notes</a></nav><main><section class="hero"><div class="hero-eyebrow">Engineering · v1.0 · Completed</div>
+<h1>A <em>full-stack</em> fashion<br>commerce platform</h1>
+<p class="hero-desc">SNITCH is a production-inspired e-commerce application with buyer and seller workflows, flexible product variants, inventory-aware cart management, Redux state, MongoDB aggregation, and Razorpay test-mode payments.</p>
+<div class="hero-tags"><span class="hero-tag">React</span><span class="hero-tag">Vite</span><span class="hero-tag">Redux Toolkit</span><span class="hero-tag">Node.js</span><span class="hero-tag">Express.js</span><span class="hero-tag">MongoDB</span><span class="hero-tag">Mongoose</span><span class="hero-tag">Razorpay</span></div></section><section class="section" id="summary"><div class="section-header"><div class="section-num-big">01</div><div class="section-title-block"><div class="section-title">Executive summary</div><div class="section-subtitle">What SNITCH is and what the project demonstrates</div></div></div>
+<p>SNITCH is a full-stack fashion e-commerce platform built around two main roles: buyers and sellers. Buyers can register, log in, browse products, inspect product variants, manage a persistent cart, complete checkout through Razorpay test mode, and reach an order-success state after payment. Sellers can create products and manage variant-level inventory.</p>
+<div class="concept"><div class="concept-label">Core value proposition</div><p>A production-inspired MERN commerce workflow that connects authentication, catalog browsing, variant-aware inventory, server-side cart management, Redux state, and payment processing in one end-to-end application.</p></div>
+<h3>Engineering focus</h3><ul><li><strong>Frontend architecture</strong> — feature-based React organization with Redux Toolkit and reusable hooks.</li><li><strong>Backend architecture</strong> — routes, validators, middleware, controllers, DAO/service logic, and Mongoose models.</li><li><strong>Commerce domain logic</strong> — product variants, stock-aware cart operations, totals, checkout, and payment-state persistence.</li></ul>
+</section><section class="section" id="architecture"><div class="section-header"><div class="section-num-big">02</div><div class="section-title-block"><div class="section-title">High-level architecture</div><div class="section-subtitle">How the browser, API server, database, and payment gateway fit together</div></div></div>
+<h3>System map</h3><div class="scale-diagram"><span class="hi">Browser — React + Vite</span><br>&nbsp;&nbsp;↓ HTTP requests / JSON<br><span class="green">Express REST API</span><br>&nbsp;&nbsp;↓ routes → validation → auth middleware → controller<br><span class="green">DAO / Service layer</span><br>&nbsp;&nbsp;↓ Mongoose queries &amp; aggregation<br><span class="hi">MongoDB</span><br><br><span class="hi">Checkout path</span><br>React → Express payment endpoint → Razorpay order → Checkout UI → payment success → persisted payment status</div>
+<h3>Frontend architecture</h3><p>The frontend is grouped by business feature rather than file type. Authentication, products, and cart each own their pages, hooks, service calls, and Redux state where required.</p>
+<h3>Backend request lifecycle</h3><div class="flow"><div class="flow-step"><div class="flow-line"><div class="flow-dot"></div><div class="flow-connector"></div></div><div class="flow-content"><div class="flow-title">Route receives request</div><div class="flow-detail">Maps HTTP method and URL to validation, middleware, and controller.</div></div></div><div class="flow-step"><div class="flow-line"><div class="flow-dot"></div><div class="flow-connector"></div></div><div class="flow-content"><div class="flow-title">Validation and authentication</div><div class="flow-detail">Rejects malformed requests and protects role-sensitive operations.</div></div></div><div class="flow-step"><div class="flow-line"><div class="flow-dot"></div></div><div class="flow-content"><div class="flow-title">Controller → DAO / service → database</div><div class="flow-detail">Executes business logic and returns a normalized API response.</div></div></div></div>
+</section><section class="section" id="modules"><div class="section-header"><div class="section-num-big">03</div><div class="section-title-block"><div class="section-title">Core modules</div><div class="section-subtitle">Authentication, catalog, inventory, cart, and payments</div></div></div>
+<div class="step-label">Authentication</div><p>Registration and login establish the user session and populate frontend auth state. Protected frontend routes control navigation while backend authentication middleware protects private API operations.</p>
+<div class="step-label green">Products &amp; Inventory</div><p>Products support flexible variants such as color and size. A variant can carry its own images, price, and stock quantity, allowing inventory to be tracked at the purchasable SKU-like level rather than only at the parent product level.</p>
+<div class="step-label blue">Cart</div><p>The cart is persisted on the server. Buyers can add a selected product variant, increment quantity, decrement quantity, and remove an item. Cart retrieval uses MongoDB aggregation to enrich cart references with product information before returning data to the client.</p>
+<div class="step-label gold">Payment</div><p>The checkout flow creates payment data through the backend and opens Razorpay Checkout in test mode. Payment records move through lifecycle states such as <code>pending</code> and <code>paid</code>, and the UI presents an order-success experience after successful completion.</p>
+</section><section class="section" id="workflow"><div class="section-header"><div class="section-num-big">04</div><div class="section-title-block"><div class="section-title">Application workflows</div><div class="section-subtitle">End-to-end buyer and seller journeys</div></div></div>
+<h3>Buyer journey</h3><div class="scale-diagram"><span class="hi">Register / Login</span> → Product Catalog → Product Detail → Select Variant → Add to Cart → Quantity Management → Checkout → Razorpay → Payment Success → Order Success</div>
+<h3>Seller journey</h3><div class="scale-diagram"><span class="hi">Seller Login</span> → Dashboard → Create Product → Add Variant Attributes → Upload / assign images → Set price → Set inventory quantity → Product available to buyers</div>
+<div class="concept"><div class="concept-label">Important domain decision</div><p>The cart should identify the exact selected variant, not only the parent product. This preserves correct price, image, size/color selection, and stock validation throughout checkout.</p></div>
+</section><section class="section" id="data"><div class="section-header"><div class="section-num-big">05</div><div class="section-title-block"><div class="section-title">Data model design</div><div class="section-subtitle">Primary commerce entities and relationships</div></div></div>
+<table class="flag-table"><thead><tr><th>Entity</th><th>Responsibility</th><th>Key relationships</th></tr></thead><tbody>
+<tr><td><span class="f-name">User</span></td><td class="f-desc">Identity, credentials, and application role.</td><td class="f-desc">Owns cart; seller role creates products.</td></tr>
+<tr><td><span class="f-name">Product</span></td><td class="f-desc">Catalog-level product information and variant collection.</td><td class="f-desc">Created by seller; referenced by cart items.</td></tr>
+<tr><td><span class="f-name">Variant</span></td><td class="f-desc">Purchasable configuration with attributes, images, price, and quantity.</td><td class="f-desc">Nested in or associated with product design.</td></tr>
+<tr><td><span class="f-name">Cart</span></td><td class="f-desc">Persistent buyer cart containing selected products/variants and quantities.</td><td class="f-desc">Belongs to user; references product data.</td></tr>
+<tr><td><span class="f-name">Payment</span></td><td class="f-desc">Tracks checkout amount, gateway identifiers, and payment status.</td><td class="f-desc">Associated with buyer checkout lifecycle.</td></tr>
+</tbody></table>
+<h3>Cart aggregation</h3><p>The cart read path uses MongoDB aggregation stages such as <code>$unwind</code> and <code>$lookup</code> to resolve product references and return a client-friendly cart representation. This avoids forcing the frontend to make separate product requests for each cart item.</p>
+</section><section class="section" id="frontend"><div class="section-header"><div class="section-num-big">06</div><div class="section-title-block"><div class="section-title">Frontend engineering</div><div class="section-subtitle">React composition, state, hooks, and service boundaries</div></div></div>
+<h3>Feature-oriented structure</h3><div class="code-wrap"><div class="code-header"><span class="code-label">Frontend/src</span></div><pre>app/
+  App.jsx
+  AppLayout.jsx
+  app.routes.jsx
+  app.store.js
+
+features/
+  auth/
+    components/
+    hook/
+    pages/
+    service/
+    state/
+  cart/
+    hook/
+    pages/
+    service/
+    state/
+  products/
+    hooks/
+    pages/
+    service/
+    state/
+  Shared/
+    Components/
+
+main.jsx</pre></div>
+<h3>State management strategy</h3><p>Redux Toolkit stores cross-page application state such as authenticated user data and cart items. Feature service modules isolate HTTP requests, while custom hooks expose reusable UI-facing operations and loading/error behavior.</p>
+<div class="concept"><div class="concept-label">Separation of concerns</div><p>Pages focus on rendering and user interaction; hooks coordinate feature behavior; service modules call the backend; Redux slices hold shared client state. This keeps API code out of presentation components.</p></div>
+</section><section class="section" id="backend"><div class="section-header"><div class="section-num-big">07</div><div class="section-title-block"><div class="section-title">Backend engineering</div><div class="section-subtitle">Layered Express application design</div></div></div>
+<div class="code-wrap"><div class="code-header"><span class="code-label">Backend/src</span></div><pre>config/
+controllers/
+dao/
+middlewares/
+models/
+routes/
+services/
+validator/
+app.js</pre></div>
+<table class="flag-table"><thead><tr><th>Layer</th><th>Responsibility</th></tr></thead><tbody>
+<tr><td><span class="f-name">Routes</span></td><td class="f-desc">Define HTTP surface and middleware chain.</td></tr>
+<tr><td><span class="f-name">Validators</span></td><td class="f-desc">Validate request body and field constraints before business logic.</td></tr>
+<tr><td><span class="f-name">Middleware</span></td><td class="f-desc">Authentication and reusable request processing.</td></tr>
+<tr><td><span class="f-name">Controllers</span></td><td class="f-desc">Translate HTTP requests into application operations and responses.</td></tr>
+<tr><td><span class="f-name">DAO / Services</span></td><td class="f-desc">Database access and external integration logic.</td></tr>
+<tr><td><span class="f-name">Models</span></td><td class="f-desc">Mongoose schemas and persistence constraints.</td></tr>
+</tbody></table>
+</section><section class="section" id="cart"><div class="section-header"><div class="section-num-big">08</div><div class="section-title-block"><div class="section-title">Cart lifecycle</div><div class="section-subtitle">Variant-aware add, increment, decrement, remove, and totals</div></div></div>
+<h3>Operation flow</h3><div class="flow"><div class="flow-step"><div class="flow-line"><div class="flow-dot"></div><div class="flow-connector"></div></div><div class="flow-content"><div class="flow-title">Add selected variant</div><div class="flow-detail">Product detail page sends the selected product/variant context to the cart API.</div></div></div><div class="flow-step"><div class="flow-line"><div class="flow-dot"></div><div class="flow-connector"></div></div><div class="flow-content"><div class="flow-title">Mutate quantity</div><div class="flow-detail">Increment and decrement operations update persistent cart state and synchronize Redux.</div></div></div><div class="flow-step"><div class="flow-line"><div class="flow-dot"></div></div><div class="flow-content"><div class="flow-title">Remove and calculate</div><div class="flow-detail">Items can be removed completely; subtotal and total are derived from quantity and current item pricing.</div></div></div></div>
+<div class="note"><div class="note-icon">💡</div><p>Inventory-aware UI feedback should prevent quantity growth beyond available stock and communicate price differences or stock changes before payment.</p></div>
+</section><section class="section" id="payment"><div class="section-header"><div class="section-num-big">09</div><div class="section-title-block"><div class="section-title">Payment workflow</div><div class="section-subtitle">Razorpay test-mode checkout and persisted payment state</div></div></div>
+<div class="scale-diagram"><span class="hi">Cart</span><br>↓ Proceed to checkout<br><span class="green">Backend payment endpoint</span><br>↓ create gateway order / payment record<br><span class="hi">Razorpay Checkout</span><br>↓ successful test payment<br><span class="green">Application payment state updated</span><br>pending → paid<br>↓<br><span class="hi">Order Success UI</span></div>
+<h3>Design responsibilities</h3><ul><li>The frontend starts checkout and presents the gateway UI.</li><li>The backend owns secret credentials and gateway order creation.</li><li>Payment state is persisted so success is not represented only by temporary client state.</li><li>Test mode is used for project demonstration; production activation requires live credentials and production-grade verification.</li></ul>
+<div class="warn"><div class="note-icon">⚠️</div><p><strong>Security rule:</strong> Razorpay key secret, database URI, and JWT secret must never be exposed in frontend code or committed to Git.</p></div>
+</section><section class="section" id="api"><div class="section-header"><div class="section-num-big">10</div><div class="section-title-block"><div class="section-title">API surface</div><div class="section-subtitle">Logical endpoint groups implemented by the application</div></div></div>
+<p>The exact route strings should remain synchronized with the source code. The application exposes these logical API groups:</p>
+<table class="flag-table"><thead><tr><th>Group</th><th>Operations</th></tr></thead><tbody>
+<tr><td><span class="f-name">Auth</span></td><td class="f-desc">Register, login, session/user retrieval, protected access.</td></tr>
+<tr><td><span class="f-name">Products</span></td><td class="f-desc">Create product, list catalog, fetch product details, create/manage variants.</td></tr>
+<tr><td><span class="f-name">Cart</span></td><td class="f-desc">Fetch cart, add item, increment, decrement, remove item.</td></tr>
+<tr><td><span class="f-name">Payment</span></td><td class="f-desc">Create payment/order data and update or verify successful payment state.</td></tr>
+</tbody></table>
+<div class="note"><div class="note-icon">💡</div><p>This documentation intentionally avoids inventing route paths that are not confirmed from source. Add an endpoint-by-endpoint table later directly from the Express route files.</p></div>
+</section><section class="section" id="setup"><div class="section-header"><div class="section-num-big">11</div><div class="section-title-block"><div class="section-title">Local development setup</div><div class="section-subtitle">Run the backend and frontend locally</div></div></div>
+<h3>Prerequisites</h3><table class="flag-table"><thead><tr><th>Tool</th><th>Purpose</th></tr></thead><tbody><tr><td><span class="f-name">Node.js + npm</span></td><td class="f-desc">Frontend and backend runtime/tooling.</td></tr><tr><td><span class="f-name">MongoDB</span></td><td class="f-desc">Application persistence.</td></tr><tr><td><span class="f-name">Razorpay test account</span></td><td class="f-desc">Checkout testing credentials.</td></tr></tbody></table>
+<div class="step-label">Backend</div><div class="code-wrap"><div class="code-header"><span class="code-label">Terminal</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre>cd Backend
+npm install
+npm run dev</pre></div>
+<div class="step-label green">Frontend</div><div class="code-wrap"><div class="code-header"><span class="code-label">Terminal</span><button class="copy-btn" onclick="copyCode(this)">copy</button></div><pre>cd Frontend
+npm install
+npm run dev</pre></div>
+</section><section class="section" id="env"><div class="section-header"><div class="section-num-big">12</div><div class="section-title-block"><div class="section-title">Environment configuration</div><div class="section-subtitle">Secrets and runtime configuration boundaries</div></div></div>
+<table class="flag-table"><thead><tr><th>Variable category</th><th>Purpose</th><th>Location</th></tr></thead><tbody>
+<tr><td><span class="f-name">MongoDB URI</span></td><td class="f-desc">Database connection.</td><td class="f-desc">Backend only.</td></tr>
+<tr><td><span class="f-name">JWT secret</span></td><td class="f-desc">Authentication token signing/verification.</td><td class="f-desc">Backend only.</td></tr>
+<tr><td><span class="f-name">Razorpay key ID</span></td><td class="f-desc">Identifies checkout account; public key may be used by checkout client.</td><td class="f-desc">Backend and approved frontend config as needed.</td></tr>
+<tr><td><span class="f-name">Razorpay key secret</span></td><td class="f-desc">Signs privileged gateway operations.</td><td class="f-desc">Backend only.</td></tr>
+<tr><td><span class="f-name">API base URL</span></td><td class="f-desc">Frontend-to-backend routing.</td><td class="f-desc">Frontend Vite environment.</td></tr>
+</tbody></table>
+<div class="warn"><div class="note-icon">⚠️</div><p>Keep <code>.env</code> files out of version control. Commit an <code>.env.example</code> containing variable names only.</p></div>
+</section><section class="section" id="security"><div class="section-header"><div class="section-num-big">13</div><div class="section-title-block"><div class="section-title">Security considerations</div><div class="section-subtitle">Current controls and production hardening priorities</div></div></div>
+<h3>Implemented boundaries</h3><ul><li>Protected backend operations use authentication middleware.</li><li>Request validation rejects invalid user input before controller logic.</li><li>Payment secrets remain server-side.</li><li>Role-aware workflows separate buyer and seller responsibilities.</li></ul>
+<h3>Production hardening priorities</h3><table class="compare"><thead><tr><th>Concern</th><th>Project state</th><th>Production target</th></tr></thead><tbody>
+<tr><td class="row-label">Payments</td><td class="local-val">Test mode</td><td class="eks-val">Signature verification, webhooks, idempotency, reconciliation</td></tr>
+<tr><td class="row-label">Rate limiting</td><td class="local-val">Not documented</td><td class="eks-val">Apply to auth, cart mutation, and payment endpoints</td></tr>
+<tr><td class="row-label">Secrets</td><td class="local-val">Environment configuration</td><td class="eks-val">Managed secret store in deployed environments</td></tr>
+<tr><td class="row-label">Validation</td><td class="local-val">Dedicated validators</td><td class="eks-val">Schema-level validation plus centralized error contracts</td></tr>
+</tbody></table>
+</section><section class="section" id="testing"><div class="section-header"><div class="section-num-big">14</div><div class="section-title-block"><div class="section-title">Testing strategy</div><div class="section-subtitle">Recommended verification plan for the completed project</div></div></div>
+<h3>Priority test coverage</h3><ul><li><strong>Authentication:</strong> valid/invalid registration and login, protected-route access.</li><li><strong>Products:</strong> product creation, variant creation, invalid price/stock input.</li><li><strong>Cart:</strong> duplicate add behavior, increment, decrement to boundary, remove, stock limits, total calculation.</li><li><strong>Payments:</strong> order creation failure, successful test payment, duplicate callback/idempotency behavior.</li></ul>
+<div class="concept"><div class="concept-label">Recommended pyramid</div><p>Unit tests for domain calculations and validators; integration tests for Express + MongoDB flows; a small number of end-to-end tests for login → product → cart → payment-success journey.</p></div>
+</section><section class="section" id="roadmap"><div class="section-header"><div class="section-num-big">15</div><div class="section-title-block"><div class="section-title">Roadmap & known limitations</div><div class="section-subtitle">What is complete and what would make SNITCH production-grade</div></div></div>
+<h3>Completed project scope</h3><ul><li>Registration and login</li><li>Seller dashboard and product creation</li><li>Variant and inventory workflow</li><li>Buyer catalog and product detail flow</li><li>Persistent cart with increment, decrement, and remove</li><li>MongoDB aggregation for enriched cart data</li><li>Razorpay test-mode payment integration</li><li>Payment status lifecycle and order-success UI</li></ul>
+<h3>Next engineering upgrades</h3><table class="flag-table"><thead><tr><th>Upgrade</th><th>Priority</th><th>Reason</th></tr></thead><tbody>
+<tr><td><span class="f-name">Order model & history</span></td><td><span class="f-val">High</span></td><td class="f-desc">Persist complete order snapshots independently of cart state.</td></tr>
+<tr><td><span class="f-name">Payment verification + webhooks</span></td><td><span class="f-val">High</span></td><td class="f-desc">Make payment state authoritative and resilient.</td></tr>
+<tr><td><span class="f-name">Automated tests</span></td><td><span class="f-val">High</span></td><td class="f-desc">Protect cart and payment business logic.</td></tr>
+<tr><td><span class="f-name">Deployment + CI/CD</span></td><td><span class="f-val">Medium</span></td><td class="f-desc">Demonstrate repeatable delivery and environment management.</td></tr>
+<tr><td><span class="f-name">Search, filters, pagination</span></td><td><span class="f-val">Medium</span></td><td class="f-desc">Improve catalog scalability and buyer experience.</td></tr>
+</tbody></table>
+</section><section class="section" id="engineering"><div class="section-header"><div class="section-num-big">16</div><div class="section-title-block"><div class="section-title">Engineering decisions & learning</div><div class="section-subtitle">The strongest technical lessons demonstrated by the project</div></div></div>
+<ul><li>Modeling product variants is more realistic than storing one global product price and quantity.</li><li>Cart state needs synchronization between backend persistence and Redux client state.</li><li>MongoDB aggregation can transform reference-heavy persistence models into frontend-friendly responses.</li><li>Payment integration is a lifecycle, not only a button: creation, pending state, gateway interaction, success handling, and persisted status all matter.</li><li>Feature-based frontend structure and layered backend structure make a medium-sized project easier to reason about and extend.</li></ul>
+<div class="concept"><div class="concept-label">Placement value</div><p>SNITCH demonstrates end-to-end ownership: UI implementation, REST API design, authentication, database modeling, aggregation pipelines, state management, cart domain logic, inventory workflows, external payment integration, and debugging across the complete stack.</p></div>
+</section><footer><span>SNITCH · Engineering Documentation</span><span>React · Node.js · MongoDB · Razorpay</span></footer></main></div><script>
+function copyCode(btn) {
+  const wrap = btn.closest('.code-wrap');
+  const pre = wrap.querySelector('pre');
+  const text = pre.innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const original = btn.innerText;
+    btn.innerText = 'copied';
+    setTimeout(() => btn.innerText = original, 1500);
+  });
+}
+
+// Active nav item on scroll
+const sections = document.querySelectorAll('.section, .hero');
+const navLinks = document.querySelectorAll('nav a');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
+</body></html>
